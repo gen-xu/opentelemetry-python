@@ -69,6 +69,9 @@ from opentelemetry.trace.status import Status, StatusCode
 from opentelemetry.util import types
 from opentelemetry.util._decorator import _agnosticcontextmanager
 
+
+import opentelemetry.sdk._native as _sdk_native
+
 logger = logging.getLogger(__name__)
 
 _DEFAULT_OTEL_ATTRIBUTE_COUNT_LIMIT = 128
@@ -1058,6 +1061,7 @@ class Tracer(trace_api.Tracer):
         self.instrumentation_info = instrumentation_info
         self._span_limits = span_limits
         self._instrumentation_scope = instrumentation_scope
+        self._native = _sdk_native.trace.Tracer()
 
     @_agnosticcontextmanager  # pylint: disable=protected-access
     def start_as_current_span(
@@ -1101,7 +1105,16 @@ class Tracer(trace_api.Tracer):
         record_exception: bool = True,
         set_status_on_exception: bool = True,
     ) -> trace_api.Span:
-
+        # return self._native.start_span(
+        #     name=name,
+        #     context=context,
+        #     kind=kind,
+        #     attributes=attributes,
+        #     links=links,
+        #     start_time=start_time,
+        #     record_exception=record_exception,
+        #     set_status_on_exception=set_status_on_exception,
+        # )
         parent_span_context = trace_api.get_current_span(
             context
         ).get_span_context()
@@ -1146,6 +1159,8 @@ class Tracer(trace_api.Tracer):
         # Only record if is_recording() is true
         if sampling_result.decision.is_recording():
             # pylint:disable=protected-access
+            span = _sdk_native.trace.Span(name, sampling_result.attributes.copy())
+            return span
             span = _Span(
                 name=name,
                 context=span_context,
