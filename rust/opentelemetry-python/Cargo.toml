@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = [
+    "opentelemetry-python-sdk",
+]
+
+[workspace.dependencies]
+pyo3 = { version = "0.21.2", features = ["extension-module"] }
+pyo3-build-config = { version = "0.21.2", features = ["resolve-config"] }

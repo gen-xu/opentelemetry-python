@@ -1,0 +1,16 @@
+[build-system]
+requires = ["maturin>=1,<2"]
+build-backend = "maturin"
+
+[project]
+name = "opentelemetry"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+
+[tool.maturin]
+python-source = "python"
+module-name = "opentelemetry.sdk._native"
+manifest-path = "opentelemetry-python-sdk/Cargo.toml"
